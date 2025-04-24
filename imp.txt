@@ -1,0 +1,36 @@
+import cv2
+import numpy as np
+
+# Define a sharpening kernel (Laplacian-like)
+sharpen_kernel = np.array([[0, -1, 0],
+                           [-1, 5,-1],
+                           [0, -1, 0]])
+
+# Use webcam (or replace with filename like 'video.mp4')
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Error: Could not open video stream.")
+    exit()
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Resize for speed (optional)
+    frame = cv2.resize(frame, (640, 480))
+
+    # Apply sharpening using filter2D
+    sharpened_frame = cv2.filter2D(frame, -1, sharpen_kernel)
+
+    # Show the original and sharpened side by side
+    combined = np.hstack((frame, sharpened_frame))
+    cv2.imshow('Original vs Sharpened', combined)
+
+    # Press 'q' to quit
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
